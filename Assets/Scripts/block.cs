@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class block : MonoBehaviour
 {
-    private void OnCollisionEnter2D(Collision2D collision)
+    public void RemovePositionFromGrid()
     {
-        Debug.Log("funciono(Colisiones)");
-        Piece parentPiece = GetComponentInParent<Piece>();
-        parentPiece.isPlaced = true;
+        GridHelper.gridhelper.RemovePosFromGrid(transform.position.x, transform.position.y);
+    }
+    public void SendPosToGrid()
+    {
+        GridHelper.gridhelper.UpdateGrid(transform.position.x,transform.position.y);
     }
 }

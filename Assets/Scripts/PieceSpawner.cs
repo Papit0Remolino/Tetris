@@ -16,21 +16,21 @@ public class PieceSpawner : MonoBehaviour
         }
         previsualization = transform.GetChild(0);
         SpawnNextPiece();
+        Invoke("TeleportToTop", 1f);
     }
 
     public void SpawnNextPiece()
     {
         int i = Random.Range(0, levelPieces.Length);
         previsualizatingPiece = Instantiate(levelPieces[i], previsualization.position, Quaternion.identity);
-        previsualizatingPiece.GetComponent<Piece>().isPrevisualizating = true;
-        StartCoroutine(TeleportToTop());
+        previsualizatingPiece.GetComponent<Piece>().enabled = false;
     }
 
-    IEnumerator TeleportToTop()
+    public void TeleportToTop()
     {
         GameObject pieceToTeleport = previsualizatingPiece;
-        yield return new WaitForSeconds(1f);
         previsualizatingPiece.transform.position = this.transform.position;
-        previsualizatingPiece.GetComponent<Piece>().isPrevisualizating = false;
+        previsualizatingPiece.GetComponent<Piece>().enabled = true;
+        SpawnNextPiece();
     }
 }

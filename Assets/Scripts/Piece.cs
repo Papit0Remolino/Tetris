@@ -6,17 +6,23 @@ public class Piece : MonoBehaviour
 {
     [SerializeField]int width;
     float fallCooldown = 0.7f;
-    public bool isPlaced;
     public bool isFalling;
-    public bool isPrevisualizating;
-    bool canMoveToRight;
-    bool canMoveToLeft;
-    bool isOnCooldown;
+    [SerializeField]bool isOnCooldown;
     bool justPressedS;
-
+    public List<block> blocks;
+    private void Start()
+    {
+        for (int i=0; i < transform.childCount; i++)
+        {
+            if (transform.GetChild(i) != null)
+            {
+                blocks.Add(transform.GetChild(i).GetComponent<block>());
+            }
+        }
+    }
     void Update()
     {
-        if (!isFalling && !isPlaced && !isPrevisualizating)
+        if (!isFalling)
         {
             if (Input.GetKey(KeyCode.S))
             {
@@ -33,34 +39,38 @@ public class Piece : MonoBehaviour
                 StartCoroutine(Fall(fallCooldown));
             }
         }
-        if (isPlaced)
-        {
-            PieceSpawner.singleton.SpawnNextPiece();
-            Destroy(this);
-        }
         PieceMovement();
-        SeeIfOnMapBounds();
+        CheckIfEmpty();
     }
     IEnumerator Fall(float cooldown)
     {
         isFalling = true;
         yield return new WaitForSeconds(cooldown);
+        foreach (block b in blocks)
+        {
+            b.RemovePositionFromGrid();
+        }
         transform.position = new Vector3(transform.position.x, transform.position.y - 1, transform.position.z);
+        foreach (block b in blocks)
+        {
+            b.SendPosToGrid();
+        }
         isFalling = false;
         if (transform.position.y < 1)
         {
-            isPlaced = true;
+            PieceSpawner.singleton.TeleportToTop();
+            Destroy(this);
         }
     }
     void PieceMovement()
     {
         float inputX = Input.GetAxisRaw("Horizontal");
-        if (inputX > 0.1f && canMoveToRight && !isOnCooldown)
+        if (inputX > 0.1f && transform.position.x < (13 - width) && !isOnCooldown)
         {
             StartCoroutine(Move());
             transform.position = new Vector2(transform.position.x + 1, transform.position.y);
         }
-        if (inputX < -0.1f && canMoveToLeft && !isOnCooldown)
+        if (inputX < -0.1f && transform.position.x > 2 && !isOnCooldown)
         {
             StartCoroutine(Move());
             transform.position = new Vector2(transform.position.x - 1, transform.position.y);
@@ -72,23 +82,32 @@ public class Piece : MonoBehaviour
         yield return new WaitForSeconds(0.15f);
         isOnCooldown = false;
     }
-    void SeeIfOnMapBounds()
+    void CheckIfEmpty()
     {
-        //12 es el punto mas alejado a la derecha del mapa donde las piezas se pueden mover
-        //teniendo en cuentas de que no todas la piezas miden igual hay que saber su longitud
-        if (transform.position.x > (12 - width))
+        if (transform.childCount == 0)
         {
-            canMoveToRight = false;
+            Destroy(this.gameObject);
         }
-        if (transform.position.x < 3)
-        {
-            canMoveToLeft = false;
-        }
-        if (transform.position.x > 3 && transform.position.x < (12 - width))
-        {
-            canMoveToRight = true;
-            canMoveToLeft = true;
-        }
-
     }
+    bool CheckIfCanFall()
+    {
+        bool canFall;
+        foreach (block b in blocks)
+        {
+            if (GridHelper.grid[(int)b.transform.position.x, (int)b.transform.position.y - 1] == null)
+            {
+                canFall = true;
+            }
+            else if (GridHelper.grid[(int)b.transform.position.x, (int)b.transform.position.y - 1].parent == this)
+            {
+                canFall = true;
+            }
+            else
+            {
+                return false;
+            }
+            return canFall;
+        }
+    }
+
 }
