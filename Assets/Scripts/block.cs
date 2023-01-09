@@ -10,6 +10,6 @@ public class block : MonoBehaviour
     }
     public void SendPosToGrid()
     {
-        GridHelper.gridhelper.UpdateGrid(transform.position.x,transform.position.y);
+        GridHelper.gridhelper.UpdateGrid(transform.position.x,transform.position.y, transform);
     }
 }

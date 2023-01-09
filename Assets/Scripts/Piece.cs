@@ -6,9 +6,7 @@ public class Piece : MonoBehaviour
 {
     [SerializeField]int width;
     float fallCooldown = 0.7f;
-    public bool isFalling;
     [SerializeField]bool isOnCooldown;
-    bool justPressedS;
     public List<block> blocks;
     private void Start()
     {
@@ -22,42 +20,41 @@ public class Piece : MonoBehaviour
     }
     void Update()
     {
-        if (!isFalling)
+        if (fallCooldown > 0) { fallCooldown -= Time.deltaTime; }
+        if (Input.GetKey(KeyCode.S))
         {
-            if (Input.GetKey(KeyCode.S))
-            {
-                if (justPressedS == true)
-                {
-                    StopCoroutine(Fall(fallCooldown));
-                    justPressedS = false;
-                }
-                justPressedS = true;
-                StartCoroutine(Fall(fallCooldown - 0.6f));
-            }
-            else
-            {
-                StartCoroutine(Fall(fallCooldown));
-            }
+            fallCooldown -= 8 * Time.deltaTime;
         }
+        if (fallCooldown < 0)
+        {
+            Fall();
+        }
+
+
         PieceMovement();
         CheckIfEmpty();
     }
-    IEnumerator Fall(float cooldown)
+    void Fall()
     {
-        isFalling = true;
-        yield return new WaitForSeconds(cooldown);
+        fallCooldown = 1;
         foreach (block b in blocks)
         {
             b.RemovePositionFromGrid();
         }
-        transform.position = new Vector3(transform.position.x, transform.position.y - 1, transform.position.z);
-        foreach (block b in blocks)
+        if (CheckIfCanFall())
         {
-            b.SendPosToGrid();
+            transform.position = new Vector3(transform.position.x, transform.position.y - 1, transform.position.z);
+            foreach (block b in blocks)
+            {
+                b.SendPosToGrid();
+            }
         }
-        isFalling = false;
-        if (transform.position.y < 1)
+        else
         {
+            foreach (block b in blocks)
+            {
+                b.SendPosToGrid();
+            }
             PieceSpawner.singleton.TeleportToTop();
             Destroy(this);
         }
@@ -65,12 +62,12 @@ public class Piece : MonoBehaviour
     void PieceMovement()
     {
         float inputX = Input.GetAxisRaw("Horizontal");
-        if (inputX > 0.1f && transform.position.x < (13 - width) && !isOnCooldown)
+        if (inputX > 0.1f && transform.position.x < (11 - width) && !isOnCooldown)
         {
             StartCoroutine(Move());
             transform.position = new Vector2(transform.position.x + 1, transform.position.y);
         }
-        if (inputX < -0.1f && transform.position.x > 2 && !isOnCooldown)
+        if (inputX < -0.1f && transform.position.x > 0 && !isOnCooldown)
         {
             StartCoroutine(Move());
             transform.position = new Vector2(transform.position.x - 1, transform.position.y);
@@ -91,23 +88,31 @@ public class Piece : MonoBehaviour
     }
     bool CheckIfCanFall()
     {
-        bool canFall;
-        foreach (block b in blocks)
+        bool canFall = false;
+        if (transform.position.y > 0)
         {
-            if (GridHelper.grid[(int)b.transform.position.x, (int)b.transform.position.y - 1] == null)
+            foreach (block b in blocks)
             {
-                canFall = true;
+                if (GridHelper.grid[(int)b.transform.position.x, (int)b.transform.position.y - 1] == null)
+                {
+                    Debug.Log(GridHelper.grid[(int)b.transform.position.x, (int)b.transform.position.y - 1]);
+                    canFall = true;
+                    Debug.Log("1");
+                }
+                //else if (GridHelper.grid[(int)b.transform.position.x, (int)b.transform.position.y - 1].parent == this)
+                //{
+                //    canFall = true;
+                //    Debug.Log("2");
+                //}
+                else
+                {
+                    Debug.Log("3");
+                    canFall = false;
+                    break;
+                }
             }
-            else if (GridHelper.grid[(int)b.transform.position.x, (int)b.transform.position.y - 1].parent == this)
-            {
-                canFall = true;
-            }
-            else
-            {
-                return false;
-            }
-            return canFall;
         }
+        return canFall;
     }
 
 }

@@ -30,12 +30,12 @@ public class GridHelper : MonoBehaviour
             return false;
         }
     }
-    public void UpdateGrid(float x, float y)
+    public void UpdateGrid(float x, float y, Transform block)
     {
-        grid[(int)x-2 , (int)y] = null;
+        grid[(int)x , (int)y] = block;
     }
     public void RemovePosFromGrid(float x, float y)
     {
-        grid[(int)x-2 , (int)y] = null;
+        grid[(int)x , (int)y] = null;
     }
 }
