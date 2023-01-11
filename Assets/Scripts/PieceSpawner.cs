@@ -10,6 +10,7 @@ public class PieceSpawner : MonoBehaviour
     GameObject previsualizatingPiece;
     void Start()
     {
+        Time.timeScale = 1;
         if (singleton == null)
         {
             singleton = this;

@@ -633,6 +633,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   width: 1
-  isPlaced: 0
-  isFalling: 0
-  isPrevisualizating: 0
+  height: 4
+  isOnCooldown: 0
+  blocks: []

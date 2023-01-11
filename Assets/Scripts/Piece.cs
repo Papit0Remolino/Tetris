@@ -6,7 +6,8 @@ public class Piece : MonoBehaviour
 {
     [SerializeField]int width;
     float fallCooldown = 0.7f;
-    [SerializeField]bool isOnCooldown;
+    bool isOnCooldown;
+    bool isFalling;
     public List<block> blocks;
     private void Start()
     {
@@ -25,29 +26,23 @@ public class Piece : MonoBehaviour
         {
             fallCooldown -= 8 * Time.deltaTime;
         }
-        if (fallCooldown < 0)
+        if (fallCooldown < 0 && !isFalling)
         {
             Fall();
         }
 
 
         PieceMovement();
-        CheckIfEmpty();
+        CheckIfEmpty(); // cuando vacias una fila que el gameobject parent vacio no se quede por ahi 
     }
     void Fall()
     {
+        isFalling = true;
         fallCooldown = 1;
-        foreach (block b in blocks)
-        {
-            b.RemovePositionFromGrid();
-        }
         if (CheckIfCanFall())
         {
             transform.position = new Vector3(transform.position.x, transform.position.y - 1, transform.position.z);
-            foreach (block b in blocks)
-            {
-                b.SendPosToGrid();
-            }
+            isFalling = false;
         }
         else
         {
@@ -56,6 +51,8 @@ public class Piece : MonoBehaviour
                 b.SendPosToGrid();
             }
             PieceSpawner.singleton.TeleportToTop();
+            GridHelper.gridhelper.CheckIfRowComplete();
+            GridHelper.gridhelper.CheckIfGameOver();
             Destroy(this);
         }
     }
@@ -64,13 +61,20 @@ public class Piece : MonoBehaviour
         float inputX = Input.GetAxisRaw("Horizontal");
         if (inputX > 0.1f && transform.position.x < (11 - width) && !isOnCooldown)
         {
-            StartCoroutine(Move());
-            transform.position = new Vector2(transform.position.x + 1, transform.position.y);
+            if (CheckIfCanMove(1))
+            {
+                StartCoroutine(Move());
+                transform.position = new Vector2(transform.position.x + 1, transform.position.y);
+            }
+
         }
         if (inputX < -0.1f && transform.position.x > 0 && !isOnCooldown)
         {
-            StartCoroutine(Move());
-            transform.position = new Vector2(transform.position.x - 1, transform.position.y);
+            if (CheckIfCanMove(-1))
+            {
+                StartCoroutine(Move());
+                transform.position = new Vector2(transform.position.x - 1, transform.position.y);
+            }
         }
     }
     IEnumerator Move()
@@ -95,24 +99,37 @@ public class Piece : MonoBehaviour
             {
                 if (GridHelper.grid[(int)b.transform.position.x, (int)b.transform.position.y - 1] == null)
                 {
-                    Debug.Log(GridHelper.grid[(int)b.transform.position.x, (int)b.transform.position.y - 1]);
                     canFall = true;
-                    Debug.Log("1");
                 }
-                //else if (GridHelper.grid[(int)b.transform.position.x, (int)b.transform.position.y - 1].parent == this)
-                //{
-                //    canFall = true;
-                //    Debug.Log("2");
-                //}
                 else
                 {
-                    Debug.Log("3");
                     canFall = false;
                     break;
                 }
             }
         }
         return canFall;
+    }
+
+    bool CheckIfCanMove(int dir)
+    {
+        bool canMove = false;
+        if (transform.position.y > 0)
+        {
+            foreach (block b in blocks)
+            {
+                if (GridHelper.grid[(int)b.transform.position.x + dir, (int)b.transform.position.y ] == null)
+                {
+                    canMove = true;
+                }
+                else
+                {
+                    canMove = false;
+                    break;
+                }
+            }
+        }
+        return canMove;
     }
 
 }

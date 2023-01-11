@@ -341,9 +341,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   width: 3
-  isPlaced: 0
-  isFalling: 0
-  isPrevisualizating: 0
+  height: 2
+  isOnCooldown: 0
+  blocks: []
 --- !u!1 &5776007972657441581
 GameObject:
   m_ObjectHideFlags: 0
