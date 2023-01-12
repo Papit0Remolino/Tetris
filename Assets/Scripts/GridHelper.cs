@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class GridHelper : MonoBehaviour
 {
@@ -8,7 +9,11 @@ public class GridHelper : MonoBehaviour
     public static int w = 11, h = 18 + 5;
     public static Transform[,] grid = new Transform[w, h];
     public bool piecePlaced;
-    [SerializeField]GameObject gameOver;
+    [SerializeField] GameObject gameOver;
+    [SerializeField] TextMeshProUGUI pointsText;
+    int points;
+    [SerializeField] TextMeshProUGUI linesText;
+    int lines;  
 
     private void Start()
     {
@@ -51,7 +56,13 @@ public class GridHelper : MonoBehaviour
                     break;
                 }
             }
-            if (isRowComplete) { DeleteRow(column); RearrangeRows(column + 1); }
+            if (isRowComplete) 
+            { 
+                DeleteRow(column); 
+                RearrangeRows(column + 1); 
+                points += 1000; pointsText.text = points.ToString();
+                lines += 1; linesText.text = lines.ToString(); 
+            }
         }
     }
 
