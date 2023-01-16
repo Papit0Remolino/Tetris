@@ -152,7 +152,7 @@ public class Piece : MonoBehaviour
 
             foreach (block b in blocks)
             {
-                if (GridHelper.Singleton.CheckIfPositionValid(b.transform.position.x, b.transform.position.y))
+                if (GridHelper.Singleton.CheckIfPositionValid(b.transform.position.x, b.transform.position.y, rotationOffset))
                 {
                     isValid = true;
                 }

@@ -119,12 +119,12 @@ public class GridHelper : MonoBehaviour
     //    }
     //}
 
-    public bool CheckIfPositionValid(float x, float y)
+    public bool CheckIfPositionValid(float x, float y, Vector2 offset)
     {
         bool isValid = false;
-        if (x < 11 && x > 0 && y > 0)
+        if (x < 11 && x > Mathf.Abs(offset.x) && y > 0)
         {
-            if (grid[(int)Mathf.Round(x - .1f), (int)Mathf.Round(y - .1f)] == null)
+            if (grid[(int)Mathf.Round(x - .1f + offset.x) , (int)Mathf.Round(y - .1f + offset.y) ] == null)
             {
                 isValid = true;
             }
