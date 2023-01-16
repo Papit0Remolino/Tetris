@@ -4,14 +4,18 @@ using UnityEngine;
 
 public class Piece : MonoBehaviour
 {
-    [SerializeField]int width;
+    [SerializeField]float width;
+    [SerializeField]float height;
+    public bool offsetX;
+    public bool offsetY;
     float fallCooldown = 0.7f;
     bool isOnCooldown;
     bool isFalling;
     public List<block> blocks;
+    [SerializeField]int currentRotation;
     private void Start()
     {
-        for (int i=0; i < transform.childCount; i++)
+        for (int i=0; i < transform.childCount; i++) 
         {
             if (transform.GetChild(i) != null)
             {
@@ -30,6 +34,8 @@ public class Piece : MonoBehaviour
         {
             Fall();
         }
+
+        Rotate();
 
 
         PieceMovement();
@@ -68,7 +74,7 @@ public class Piece : MonoBehaviour
             }
 
         }
-        if (inputX < -0.1f && transform.position.x > 0 && !isOnCooldown)
+        if (inputX < -0.1f && transform.position.x > 0 + width && !isOnCooldown)
         {
             if (CheckIfCanMove(-1))
             {
@@ -93,11 +99,11 @@ public class Piece : MonoBehaviour
     bool CheckIfCanFall()
     {
         bool canFall = false;
-        if (transform.position.y > 0)
+        if (transform.position.y > height)
         {
             foreach (block b in blocks)
             {
-                if (GridHelper.grid[(int)b.transform.position.x, (int)b.transform.position.y - 1] == null)
+                if (GridHelper.grid[(int)Mathf.Round(b.transform.position.x), (int)Mathf.Round(b.transform.position.y - 1)] == null)
                 {
                     canFall = true;
                 }
@@ -118,7 +124,8 @@ public class Piece : MonoBehaviour
         {
             foreach (block b in blocks)
             {
-                if (GridHelper.grid[(int)b.transform.position.x + dir, (int)b.transform.position.y ] == null)
+                Debug.Log("x = " + (int)Mathf.Round(b.transform.position.x + dir) + "y = " + (int)Mathf.Round(b.transform.position.y));
+                if (GridHelper.grid[(int)Mathf.Round(b.transform.position.x + dir), (int)Mathf.Round(b.transform.position.y) ] == null)
                 {
                     canMove = true;
                 }
@@ -130,6 +137,36 @@ public class Piece : MonoBehaviour
             }
         }
         return canMove;
+    }
+
+    void Rotate()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            float storeWidth = width;
+            width = height;
+            height = storeWidth;
+            
+            if (currentRotation == 360)
+            {
+                currentRotation = 0;
+            }
+            currentRotation += 90;
+
+            transform.rotation = Quaternion.Euler(0, 0, currentRotation);
+
+            if (currentRotation == 90 || currentRotation == 270)
+            {
+                transform.position += new Vector3(.5f, .5f, 0);
+            }
+            if (currentRotation == 180 || currentRotation == 360)
+            {
+                transform.position += new Vector3(-.5f, -.5f, 0);
+            }
+
+
+        }
+
     }
 
 }

@@ -8,4 +8,9 @@ public class block : MonoBehaviour
     {
         GridHelper.gridhelper.UpdateGrid(transform.position.x,transform.position.y, transform);
     }
+
+    //private void Update()
+    //{
+    //    Debug.Log(transform.position);
+    //}
 }

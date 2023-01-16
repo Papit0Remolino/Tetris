@@ -29,8 +29,18 @@ public class PieceSpawner : MonoBehaviour
 
     public void TeleportToTop()
     {
-        GameObject pieceToTeleport = previsualizatingPiece;
-        previsualizatingPiece.transform.position = this.transform.position;
+        float offsetX = 0;
+        float offsetY = 0;
+        if (previsualizatingPiece.GetComponent<Piece>().offsetX)
+        {
+            offsetX = -0.5f;
+        }
+        if (previsualizatingPiece.GetComponent<Piece>().offsetY)
+        {
+            offsetY = -0.5f;
+        }
+        previsualizatingPiece.transform.position = new Vector3(this.transform.position.x - offsetX, this.transform.position.y - offsetY, this.transform.position.z);
+
         previsualizatingPiece.GetComponent<Piece>().enabled = true;
         SpawnNextPiece();
     }
