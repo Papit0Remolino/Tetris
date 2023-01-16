@@ -634,8 +634,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   width: 0.5
   height: 2
-  isLShaped: 0
-  isSShaped: 0
+  canRotate: 1
   offsetX: 1
   offsetY: 0
   blocks: []
+  currentRotation: 0

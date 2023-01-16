@@ -342,11 +342,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   width: 1.5
   height: 1
-  isLShaped: 0
-  isSShaped: 1
+  canRotate: 1
   offsetX: 1
   offsetY: 0
   blocks: []
+  currentRotation: 0
 --- !u!1 &3614477163902996446
 GameObject:
   m_ObjectHideFlags: 0

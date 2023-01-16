@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class block : MonoBehaviour
 {
+    Piece piece;
+    private void Start()
+    {
+        piece = GetComponentInParent<Piece>();
+    }
     public void SendPosToGrid()
     {
-        GridHelper.gridhelper.UpdateGrid(transform.position.x,transform.position.y, transform);
+        GridHelper.Singleton.UpdateGrid(transform.position.x + piece.rotationOffset.x, transform.position.y + piece.rotationOffset.y, transform);
     }
-
-    //private void Update()
-    //{
-    //    Debug.Log(transform.position);
-    //}
 }

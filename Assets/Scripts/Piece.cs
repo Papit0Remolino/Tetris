@@ -6,13 +6,15 @@ public class Piece : MonoBehaviour
 {
     [SerializeField]float width;
     [SerializeField]float height;
+    [SerializeField]bool canRotate;
     public bool offsetX;
     public bool offsetY;
     float fallCooldown = 0.7f;
     bool isOnCooldown;
     bool isFalling;
     public List<block> blocks;
-    [SerializeField]int currentRotation;
+    public int currentRotation;
+    public Vector2 rotationOffset = new Vector2 (0, 0);
     private void Start()
     {
         for (int i=0; i < transform.childCount; i++) 
@@ -57,8 +59,9 @@ public class Piece : MonoBehaviour
                 b.SendPosToGrid();
             }
             PieceSpawner.singleton.TeleportToTop();
-            GridHelper.gridhelper.CheckIfRowComplete();
-            GridHelper.gridhelper.CheckIfGameOver();
+            GridHelper.Singleton.CheckIfRowComplete();
+            GridHelper.Singleton.CheckIfGameOver();
+            //GridHelper.Singleton.PrevisualizeGrid();
             Destroy(this);
         }
     }
@@ -103,7 +106,7 @@ public class Piece : MonoBehaviour
         {
             foreach (block b in blocks)
             {
-                if (GridHelper.grid[(int)Mathf.Round(b.transform.position.x), (int)Mathf.Round(b.transform.position.y - 1)] == null)
+                if (GridHelper.grid[(int)Mathf.Round(b.transform.position.x + rotationOffset.x), (int)Mathf.Round(b.transform.position.y - 1 + rotationOffset.y)] == null)
                 {
                     canFall = true;
                 }
@@ -124,8 +127,8 @@ public class Piece : MonoBehaviour
         {
             foreach (block b in blocks)
             {
-                Debug.Log("x = " + (int)Mathf.Round(b.transform.position.x + dir) + "y = " + (int)Mathf.Round(b.transform.position.y));
-                if (GridHelper.grid[(int)Mathf.Round(b.transform.position.x + dir), (int)Mathf.Round(b.transform.position.y) ] == null)
+                //Debug.Log("x = " + (b.transform.position.x ).ToString("F2") + "y = " + (b.transform.position.y).ToString("F2"));
+                if (GridHelper.grid[(int)Mathf.Round(b.transform.position.x + dir + rotationOffset.x), (int)Mathf.Round(b.transform.position.y + rotationOffset.y) ] == null)
                 {
                     canMove = true;
                 }
@@ -141,28 +144,62 @@ public class Piece : MonoBehaviour
 
     void Rotate()
     {
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.R) && canRotate)
         {
-            float storeWidth = width;
-            width = height;
-            height = storeWidth;
-            
-            if (currentRotation == 360)
-            {
-                currentRotation = 0;
-            }
-            currentRotation += 90;
+            bool isValid = false;
 
-            transform.rotation = Quaternion.Euler(0, 0, currentRotation);
+            transform.Rotate(0, 0, 90);
 
-            if (currentRotation == 90 || currentRotation == 270)
+            foreach (block b in blocks)
             {
-                transform.position += new Vector3(.5f, .5f, 0);
+                if (GridHelper.Singleton.CheckIfPositionValid(b.transform.position.x, b.transform.position.y))
+                {
+                    isValid = true;
+                }
+                else
+                {
+                    isValid = false;
+                    break;
+                }
             }
-            if (currentRotation == 180 || currentRotation == 360)
+
+            if (isValid)
             {
-                transform.position += new Vector3(-.5f, -.5f, 0);
+                float storeWidth = width;
+                width = height;
+                height = storeWidth;
+
+                if (currentRotation == 360)
+                {
+                    currentRotation = 0;
+                }
+                currentRotation += 90;
+
+                switch (currentRotation)
+                {
+                    case 90:
+                        transform.position += new Vector3(.5f, .5f, 0);
+                        rotationOffset = new Vector2(-1, 0);
+                        break;
+                    case 180:
+                        transform.position += new Vector3(-.5f, -.5f, 0);
+                        rotationOffset = new Vector2(-1, -1);
+                        break;
+                    case 270:
+                        transform.position += new Vector3(.5f, .5f, 0);
+                        rotationOffset = new Vector2(0, -1);
+                        break;
+                    case 360:
+                        rotationOffset = new Vector2(0, 0);
+                        transform.position += new Vector3(-.5f, -.5f, 0);
+                        break;
+                }
             }
+            else
+            {
+                transform.Rotate(0, 0, -90);
+            }
+
 
 
         }

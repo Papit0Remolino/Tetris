@@ -5,7 +5,7 @@ using TMPro;
 
 public class GridHelper : MonoBehaviour
 {
-    public static GridHelper gridhelper = null;
+    public static GridHelper Singleton = null;
     public static int w = 11, h = 18 + 5;
     public static Transform[,] grid = new Transform[w, h];
     public bool piecePlaced;
@@ -13,13 +13,14 @@ public class GridHelper : MonoBehaviour
     [SerializeField] TextMeshProUGUI pointsText;
     int points;
     [SerializeField] TextMeshProUGUI linesText;
-    int lines;  
+    int lines; 
+    [SerializeField] GameObject pruebas;
 
     private void Start()
     {
-        if (gridhelper == null)
+        if (Singleton == null)
         {
-            gridhelper = this;
+            Singleton = this;
         }
     }
     public static bool IsInsideBorders(Vector2 pos)
@@ -35,7 +36,7 @@ public class GridHelper : MonoBehaviour
     }
     public void UpdateGrid(float x, float y, Transform block)
     {
-        grid[(int)x , (int)y] = block;
+        grid[(int)Mathf.Round(x - .1f), (int)Mathf.Round(y - .1f)] = block;
     }
     public void RemovePosFromGrid(float x, float y)
     {
@@ -102,5 +103,32 @@ public class GridHelper : MonoBehaviour
                 break;
             }
         }
+    }
+
+    //public void PrevisualizeGrid()
+    //{
+    //    for (int column = 0; column < h; column++)
+    //    {
+    //        for (int row = 0; row < w; row++)
+    //        {
+    //            if (grid[row, column] != null)
+    //            {
+    //                Instantiate(pruebas, new Vector3(row + 30, column + 30, 0),Quaternion.identity);
+    //            }
+    //        }
+    //    }
+    //}
+
+    public bool CheckIfPositionValid(float x, float y)
+    {
+        bool isValid = false;
+        if (x < 11 && x > 0 && y > 0)
+        {
+            if (grid[(int)Mathf.Round(x - .1f), (int)Mathf.Round(y - .1f)] == null)
+            {
+                isValid = true;
+            }
+        }
+        return isValid;
     }
 }
