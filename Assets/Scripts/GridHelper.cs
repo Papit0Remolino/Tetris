@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.Audio;
 
 public class GridHelper : MonoBehaviour
 {
@@ -14,7 +15,8 @@ public class GridHelper : MonoBehaviour
     int points;
     [SerializeField] TextMeshProUGUI linesText;
     int lines; 
-    [SerializeField] GameObject pruebas;
+    [SerializeField] AudioSource gameOverSound;
+    [SerializeField] AudioSource rowCompleteSound;
 
     private void Start()
     {
@@ -60,7 +62,8 @@ public class GridHelper : MonoBehaviour
             if (isRowComplete) 
             { 
                 DeleteRow(column); 
-                RearrangeRows(column + 1); 
+                RearrangeRows(column + 1);
+                rowCompleteSound.Play();
                 points += 1000; pointsText.text = points.ToString();
                 lines += 1; linesText.text = lines.ToString(); 
             }
@@ -100,6 +103,7 @@ public class GridHelper : MonoBehaviour
             if (grid[row, 15] != null)
             {
                 gameOver.SetActive(true);
+                gameOverSound.Play();
                 break;
             }
         }
