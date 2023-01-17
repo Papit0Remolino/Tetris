@@ -59,8 +59,8 @@ public class Piece : MonoBehaviour
                 b.SendPosToGrid();
             }
             PieceSpawner.singleton.TeleportToTop();
-            GridHelper.Singleton.CheckIfRowComplete();
-            GridHelper.Singleton.CheckIfGameOver();
+            GridHelperTetris.Singleton.CheckIfRowComplete();
+            GridHelperTetris.Singleton.CheckIfGameOver();
             //GridHelper.Singleton.PrevisualizeGrid();
             Destroy(this);
         }
@@ -106,7 +106,7 @@ public class Piece : MonoBehaviour
         {
             foreach (block b in blocks)
             {
-                if (GridHelper.grid[(int)Mathf.Round(b.transform.position.x + rotationOffset.x), (int)Mathf.Round(b.transform.position.y - 1 + rotationOffset.y)] == null)
+                if (GridHelperTetris.grid[(int)Mathf.Round(b.transform.position.x + rotationOffset.x), (int)Mathf.Round(b.transform.position.y - 1 + rotationOffset.y)] == null)
                 {
                     canFall = true;
                 }
@@ -128,7 +128,7 @@ public class Piece : MonoBehaviour
             foreach (block b in blocks)
             {
                 //Debug.Log("x = " + (b.transform.position.x ).ToString("F2") + "y = " + (b.transform.position.y).ToString("F2"));
-                if (GridHelper.grid[(int)Mathf.Round(b.transform.position.x + dir + rotationOffset.x), (int)Mathf.Round(b.transform.position.y + rotationOffset.y) ] == null)
+                if (GridHelperTetris.grid[(int)Mathf.Round(b.transform.position.x + dir + rotationOffset.x), (int)Mathf.Round(b.transform.position.y + rotationOffset.y) ] == null)
                 {
                     canMove = true;
                 }
@@ -152,7 +152,7 @@ public class Piece : MonoBehaviour
 
             foreach (block b in blocks)
             {
-                if (GridHelper.Singleton.CheckIfPositionValid(b.transform.position.x, b.transform.position.y, rotationOffset))
+                if (GridHelperTetris.Singleton.CheckIfPositionValid(b.transform.position.x, b.transform.position.y, rotationOffset))
                 {
                     isValid = true;
                 }

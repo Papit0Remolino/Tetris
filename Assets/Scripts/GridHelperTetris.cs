@@ -4,9 +4,9 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.Audio;
 
-public class GridHelper : MonoBehaviour
+public class GridHelperTetris : MonoBehaviour
 {
-    public static GridHelper Singleton = null;
+    public static GridHelperTetris Singleton = null;
     public static int w = 11, h = 18 + 5;
     public static Transform[,] grid = new Transform[w, h];
     public bool piecePlaced;

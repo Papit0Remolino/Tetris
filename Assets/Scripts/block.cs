@@ -11,6 +11,6 @@ public class block : MonoBehaviour
     }
     public void SendPosToGrid()
     {
-        GridHelper.Singleton.UpdateGrid(transform.position.x + piece.rotationOffset.x, transform.position.y + piece.rotationOffset.y, transform);
+        GridHelperTetris.Singleton.UpdateGrid(transform.position.x + piece.rotationOffset.x, transform.position.y + piece.rotationOffset.y, transform);
     }
 }
